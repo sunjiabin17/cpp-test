@@ -1,5 +1,5 @@
 all: build
-build: hello_bin
+build: bin
 
 CC=g++
 # -std=c++11: 使用C++11标准进行编译。
@@ -15,8 +15,8 @@ LDFLAGS=-lpthread
 hello.o: hello.cc
 	$(CC) $(CXXFLAGS) -c -o $@ $^
 
-hello_bin: hello.o
+bin: hello.o
 	$(CC) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
-	rm -f hello.o hello_bin
+	rm -f hello.o bin
