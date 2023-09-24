@@ -1,4 +1,4 @@
-all: bin
+all: bin bin.1 bin.2
 PHONY: all clean
 
 CC = g++
@@ -10,6 +10,12 @@ memory_order.o: memory_order.cc
 bin: memory_order.o
 	$(CC) $(CXXFLAGS) -o $@ $^
 
-clean:
-	rm -f memory_order.o bin
 
+bin.1: memory_order_1.cc
+	$(CC) $(CXXFLAGS) -o $@ $^
+
+bin.2: memory_order_2.cc
+	$(CC) $(CXXFLAGS) -o $@ $^
+
+clean:
+	rm -f memory_order.o bin bin.1 bin.2
