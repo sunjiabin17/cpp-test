@@ -3,7 +3,7 @@
 
 void async_func(std::promise<int>& p, int value) {
     std::cout << "async_func" << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     p.set_value(value);
 }
 
@@ -17,6 +17,5 @@ int main() {
     std::cout << "value: " << value << std::endl;
 
     t.join();
-
     return 0;
 }
