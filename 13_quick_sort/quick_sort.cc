@@ -81,6 +81,20 @@ int main() {
     std::cout << std::endl;
     std::vector<int> v2(v1);
 
+        auto start1 = std::chrono::high_resolution_clock::now();
+    quick_sort(v2, 0, v2.size() - 1);
+    auto end1 = std::chrono::high_resolution_clock::now();
+    auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1);
+    std::cout << "quick_sort duration: " << duration1.count() << " microseconds" << std::endl;
+
+    for (int i = 0; i < v2.size(); ++i) {
+        if (i < 20) {
+            std::cout << v2[i] << " ";
+        }
+    }
+    std::cout << std::endl;
+
+
     auto start = std::chrono::high_resolution_clock::now();
     async_quick_sort(v1, 0, v1.size() - 1);
     auto end = std::chrono::high_resolution_clock::now();
@@ -94,19 +108,6 @@ int main() {
     }
     std::cout << std::endl;
 
-
-    start = std::chrono::high_resolution_clock::now();
-    quick_sort(v2, 0, v2.size() - 1);
-    end = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "quick_sort duration: " << duration.count() << " microseconds" << std::endl;
-
-    for (int i = 0; i < v2.size(); ++i) {
-        if (i < 20) {
-            std::cout << v2[i] << " ";
-        }
-    }
-    std::cout << std::endl;
 
     return 0;
 }
