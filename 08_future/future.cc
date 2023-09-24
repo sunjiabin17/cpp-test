@@ -23,18 +23,19 @@ int test2() {
 }
 
 int main() {
-    // std::future<int> f2 = std::async(std::launch::async, test2);    // 启动时就开始执行
-    // int value = f2.get();   // 等待异步操作的结果
-    // std::future<void> f1 = std::async(std::launch::async, test1);
-
-    // std::cout << "value: " << value << std::endl;
-
-    std::future<int> f2 = std::async(std::launch::deferred, test2);    // 调用get()时才开始执行
+    std::future<int> f2 = std::async(std::launch::async, test2);    // 启动时就开始执行
+    int value = f2.get();   // 等待异步操作的结果
     std::future<void> f1 = std::async(std::launch::async, test1);
 
-    int value = f2.get();   // 等待异步操作的结果
-    f1.get();
-    std::cout << "value: " << value << std::endl;
+    // value = f2.get();   // 只能调用一次
+    std::cout << "main thread value: " << value << std::endl;
+
+    // std::future<int> f2 = std::async(std::launch::deferred, test2);    // 调用get()时才开始执行
+    // std::future<void> f1 = std::async(std::launch::async, test1);
+
+    // int value = f2.get();   // 等待异步操作的结果
+    // f1.get();
+    // std::cout << "value: " << value << std::endl;
 
     return 0;
 }
