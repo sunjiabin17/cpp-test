@@ -68,6 +68,7 @@
         "queue": "cpp",
         "future": "cpp",
         "numeric": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "stack": "cpp"
     }
 }
