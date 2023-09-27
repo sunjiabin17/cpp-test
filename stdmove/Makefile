@@ -2,7 +2,7 @@ all: bin
 PHONY: all clean
 
 CC=g++
-CXXFLAGS=-std=c++11 -Wall -g -fno-elide-constructors -pthread
+CXXFLAGS=-std=c++11 -Wall -O0 -g -pthread -fno-elide-constructors
 
 bin: test.o
 	$(CC) $(CXXFLAGS) -o $@ $^
