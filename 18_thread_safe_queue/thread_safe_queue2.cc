@@ -15,74 +15,92 @@ public:
 
 template<typename T>
 class threadsafe_queue {
-private:
-    struct node {
-        std::shared_ptr<T> data;
-        std::unique_ptr<node> next;
-    };
-
-    std::mutex head_mutex;
-    std::unique_ptr<node> head;
-    std::mutex tail_mutex;
-    node* tail;
-
-    node* get_tail() {
-        std::lock_guard<std::mutex> lock(tail_mutex);
-        return tail;
-    }
-
-    std::unique_ptr<node> pop_head() {
-        std::lock_guard<std::mutex> lock(head_mutex);
-        if (head.get() == get_tail()) {
-            return nullptr;
-        }
-        std::unique_ptr<node> old_head = std::move(head);
-        head = std::move(old_head->next);
-        return old_head;
-    }
-
 public:
-    threadsafe_queue(): head(new node), tail(head.get()) {}
-    threadsafe_queue(const threadsafe_queue& other) = delete;
-    threadsafe_queue& operator=(const threadsafe_queue& other) = delete;
-
-    std::shared_ptr<T> try_pop() {
-        std::unique_ptr<node> old_head = pop_head();
-        return old_head ? old_head->data : std::shared_ptr<T>();
+    threadsafe_queue() {}
+    threadsafe_queue(const threadsafe_queue& other) {
+        std::lock_guard<std::mutex> lock(other.m);
+        data = other.data;
     }
+
+    threadsafe_queue& operator=(const threadsafe_queue&) = delete;
 
     void push(T new_value) {
         std::shared_ptr<T> new_data(std::make_shared<T>(std::move(new_value)));
-        std::unique_ptr<node> p(new node);
-        node* const new_tail = p.get();     // 即指针本身是常量，指向的对象可以修改
-        std::lock_guard<std::mutex> lock(tail_mutex);
-        tail->data = new_data;
-        tail->next = std::move(p);
-        tail = new_tail;
+        std::lock_guard<std::mutex> lock(m);
+        std::cout << "push " << new_value << std::endl;
+        data.push(new_data);
+        data_cond.notify_one();
     }
 
+    void wait_and_pop(T& value) {
+        std::unique_lock<std::mutex> lock(m);
+        data_cond.wait(lock, [this] {return !data.empty();});
+        std::cout << "wait_and_pop " << value << std::endl;
+        value = data.front();
+        data.pop();
+    }
+
+    std::shared_ptr<T> wait_and_pop() {
+        std::unique_lock<std::mutex> lock(m); 
+        // 不止一个线程等待对队列进行推送操作时，只会有一个线程因 data_cond.notify_one() 而继续工作。
+        // 但是，如果工作线程在 wait_and_pop() 中抛出一个异常，例如，构造新的 std::shared_ptr<> 对象时抛出异常，那么其他线程则会永远休眠。
+        // 解决方案：
+        // 3. 将 std::shared_ptr<> 的初始化过程移到 push() 中，并且存储 std::shared_ptr<> 实例，而不是直接使用数据值，将 std::shared_ptr<> 拷贝到内部 std::queue<> 中就不会抛出异常了，这样wait_and_pop() 又是安全的了
+        data_cond.wait(lock, [this] {return !data.empty();});
+        std::shared_ptr<T> res = data.front();
+        std::cout << "wait_and_pop: " << *res << std::endl;
+
+        data.pop();
+        return res;
+    }
+
+    bool try_pop(T& value) {
+        std::lock_guard<std::mutex> lock(m);
+        if (data.empty()) return false;
+        value = std::move(*data.front());
+        std::cout << "try_pop " << value << std::endl;
+        data.pop();
+        return true;
+    }
+
+    std::shared_ptr<T> try_pop() {
+        std::lock_guard<std::mutex> lock(m);
+        if (data.empty()) return std::shared_ptr<T>();
+        std::shared_ptr<T> res = data.front();
+        std::cout << "try_pop " << *res << std::endl;
+        data.pop();
+        return res;
+    }
+
+    bool empty() const {
+        std::lock_guard<std::mutex> lock(m);
+        std::cout << "empty" << std::endl;
+        return data.empty();
+    }
+private:
+    std::queue<std::shared_ptr<T>> data;
+    mutable std::mutex m;
+    std::condition_variable data_cond;
 };
 
 int main() {
     threadsafe_queue<int> q;
-    std::thread t1([&q](){
-        q.push(1);
-        q.push(2);
-        q.push(3);
+    q.push(12);
+    std::thread t1([&q] {
+        q.push(42);
     });
-    std::thread t2([&q](){
-        std::cout << *q.try_pop() << std::endl;
-        std::cout << *q.try_pop() << std::endl;
-        std::cout << *q.try_pop() << std::endl;
+    std::thread t2([&q] {
+        int value;
+        q.try_pop(value);
     });
-    
-    std::thread t3([&q](){
-        std::cout << *q.try_pop() << std::endl;
-        std::cout << *q.try_pop() << std::endl;
-        std::cout << *q.try_pop() << std::endl;
+
+    std::future<int> f1 = std::async([&q] {
+        return *(q.wait_and_pop());
     });
+
+
     t1.join();
     t2.join();
-    t3.join();
+
     return 0;
 }

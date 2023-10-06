@@ -9,7 +9,7 @@ bin.%: thread_safe_queue%.o
 	$(CC) $(CXXFLAGS) -o $@ $^
 
 thread_safe_queue%.o: thread_safe_queue%.cc
-
+	$(CC) $(CXXFLAGS) -c -o $@ $^
 # bin.1: thread_safe_queue1.o
 # 	$(CC) $(CXXFLAGS) -o $@ $^
 
