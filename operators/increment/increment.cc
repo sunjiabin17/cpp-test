@@ -5,7 +5,6 @@ class A {
 public:
     A(int _x): x(_x) {std::cout << "A(int)" << std::endl;}
     ~A() {std::cout << "~A()" << std::endl;}
-    int x;
 
     A& operator++() {
         ++x;
@@ -17,6 +16,8 @@ public:
         ++x;
         return tmp;
     }
+    
+    int x;
 };
 
 int main() {
