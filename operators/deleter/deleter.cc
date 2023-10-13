@@ -44,6 +44,7 @@ void func_deleter(Foo* p) {
     delete p;
 }
 
+
 void print_address(void* a) {
     std::cout << "address a: " << a << std::endl;
     std::cout << "address &a: " << &a << std::endl;

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 // class Foo {
 // public:
@@ -69,8 +70,20 @@
 
 class A {
 public:
-    A() {std::cout << "A()" << std::endl;}
-    ~A() {std::cout << "~A()" << std::endl;}
+    int *p;
+    A(int x) {
+        std::cout << "A()" << std::endl;
+        p = new int(x);
+    }
+    ~A() {
+        std::cout << "~A()" << std::endl;
+        delete p;
+        }
+    A(A&& a) {
+        std::cout << "A(A&&)" << std::endl;
+        p = a.p;
+        // a.p = nullptr;
+        }
 };
 
 class B {
@@ -85,15 +98,25 @@ public:
     ~C() {std::cout << "~C()" << std::endl;}
 };
 
-class D {
-public:
-    D() {};
-    A a;
-    B b;
-    C c;
-};
+
+template <typename T>
+void func(T&& a) {
+    std::cout << a << std::endl;
+}
+
 
 int main() {
-    D d;
+    // A* a1 = new A(12);
+    // A* a2 = new A(std::move(*a1));
+    // std::cout << *a1->p << std::endl;
+    // std::cout << *a2->p << std::endl;
+
+    // delete a1;
+    // std::cout << *a2->p << std::endl;
+
+    std::string a("abccc");
+
+    func(a);
+
     return 0;
 }
