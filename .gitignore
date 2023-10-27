@@ -35,3 +35,5 @@ bin
 bin.*
 .vscode/*
 core.*
+
+build/
