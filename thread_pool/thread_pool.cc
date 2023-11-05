@@ -1,10 +1,12 @@
 #include "thread_pool.h"
 #include <stdexcept>
+#include <iostream>
 
 ThreadPool::ThreadPool(size_t thread_count) : stop_(false) {
   if (thread_count == 0) {
     throw std::invalid_argument("thread_count cannot be zero.");
   }
+  std::cout << "creating thread pool" << std::endl;
 
   const auto worker_loop = [this]() {
     while (true) {
@@ -13,6 +15,8 @@ ThreadPool::ThreadPool(size_t thread_count) : stop_(false) {
         std::unique_lock<std::mutex> lk(queue_mutex_);
         cv_.wait(lk, [this]() { return stop_ or !task_queue_.empty(); });
         if (stop_ and task_queue_.empty()) {
+          std::cout << "thread " << std::this_thread::get_id()
+                    << " is exiting" << std::endl;
           break;
         }
         task = std::move(task_queue_.front());
