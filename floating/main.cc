@@ -1,4 +1,5 @@
 #include <iostream>
+#include <bitset>
 
 // class Base {
 // public:
@@ -44,6 +45,20 @@
 //     return 0;
 // }
 
+
+struct aa
+{
+    unsigned int a: 8;
+    unsigned int b: 24;
+};
+
+struct bb
+{
+    unsigned int c: 32;
+};
+
+
+
 int main() {
     // 浮点数表示法测试
     std::string S("0");
@@ -58,6 +73,19 @@ int main() {
 
     float b = *(reinterpret_cast<float*>(&dec));
     std::cout << b << std::endl;
+    std::cout << dec << std::endl;
 
+    float c = static_cast<float>(dec);
+    std::cout << c << std::endl;
+
+    aa sa;
+    sa.a = 255;
+    sa.b = 0;
+
+
+    bb sb = *(reinterpret_cast<bb*>(&sa));
+    std::cout << sb.c << std::endl;
+    std::string binary_str_c = std::bitset<32>(sb.c).to_string();
+    std::cout << binary_str_c << std::endl;
     return 0;
 }

@@ -7,7 +7,7 @@ CXXFLAGS=-Wall -std=c++11 -g
 bin: main.o
 	$(CC) $(CXXFLAGS) $^ -o $@
 
-main.o: main.cpp
+main.o: main.cc
 	$(CC) $(CXXFLAGS) -c $^ -o $@
 
 clean:
