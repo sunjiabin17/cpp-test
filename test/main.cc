@@ -2,20 +2,28 @@
 #include <iostream>
 #include <memory>
 
-std::unique_ptr<int> f() {
-  return std::make_unique<int>(10);
-}
+class A {
+public:
+  A() = default;
+  int a = 123;
+};
 
-double f() {
-  return 1.23333;
-}
-
-double f2() {
-  int* a = new int(20);
-  [[maybe_unused]] &a;
-}
+class B {
+public:
+  int b = 456;
+  ~B() {
+    std::cout << "B destructor" << std::endl;
+  }
+};
 
 int main() {
-  std::cout << f2() << std::endl;
+  A a;
+  std::cout << a.a << std::endl;
+  std::cout << __GXX_ABI_VERSION << std::endl;
+
+  B b;
+  B c;
+  c = std::move(b);
+  std::cout << b.b << std::endl;
   return 0;
 }

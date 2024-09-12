@@ -45,10 +45,11 @@ int main() {
   func2(1);
   func2(a);
 
-  func3(&a);
+  auto r = func3(&a);
 
   std::cout << "type f1: " << type_id_with_cvr<decltype(f1)>().pretty_name() << std::endl;
   std::cout << "type f2: " << type_id_with_cvr<decltype(f2)>().pretty_name() << std::endl;
   std::cout << "type x: " << type_id_with_cvr<decltype(x)>().pretty_name() << std::endl;
+  std::cout << "nullptr_t: " << type_id_with_cvr<std::nullptr_t>().pretty_name() << std::endl;
   return 0;
 }
