@@ -12,24 +12,26 @@ set(CMAKE_BUILD_TYPE Debug)
 # )
 # FetchContent_MakeAvailable(lib-add)
 
+set(VARIABLE1 "VARIABLE1")
+message(STATUS "BEFOR subdir: ${VARIABLE1}")
 add_subdirectory(cpp_tmp)
+message(STATUS "AFTER subdir: ${VARIABLE1}")
 
+# add_executable(main main.cc)
 
-add_executable(main main.cc)
+# target_link_libraries(main PRIVATE my_add)
+# # target_include_directories(main PRIVATE ${lib-add_SOURCE_DIR}/include)
 
-target_link_libraries(main PRIVATE my_add)
-# target_include_directories(main PRIVATE ${lib-add_SOURCE_DIR}/include)
+# include(GNUInstallDirs)
+# install(
+#   TARGETS main
+#   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+# )
 
-include(GNUInstallDirs)
-install(
-  TARGETS main
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-)
-
-get_cmake_property(_variableNames VARIABLES)
-list (SORT _variableNames)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
+# get_cmake_property(_variableNames VARIABLES)
+# list (SORT _variableNames)
+# foreach (_variableName ${_variableNames})
+#     message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()

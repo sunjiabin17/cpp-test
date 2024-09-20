@@ -24,12 +24,22 @@ public:
   }
 };
 
+class B : public A {
+};
+
+
 A func() {
   A a;
   return a;
 }
 
+A func2() {
+  return func();
+}
+
+
 int main() {
-  A a = func();
+  A a = func2();
+
   return 0;
 }
