@@ -48,5 +48,8 @@ int main() {
   for (auto i : arr) {
     std::cout << i << std::endl;
   }
+
+  constexpr unsigned long long value = 0x0000000000000001;
+  constexpr int leading_zeros = __builtin_clzll(value);
   return 0;
 }
